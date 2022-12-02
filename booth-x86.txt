@@ -1,0 +1,307 @@
+.LC0:
+        .string "%d"
+printBin:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 112
+        mov     eax, edi
+        mov     WORD PTR [rbp-100], ax
+        mov     WORD PTR [rbp-14], 1
+        mov     DWORD PTR [rbp-4], 15
+        mov     DWORD PTR [rbp-8], 0
+        jmp     .L2
+.L3:
+        movzx   eax, WORD PTR [rbp-100]
+        and     ax, WORD PTR [rbp-14]
+        cwde
+        mov     DWORD PTR [rbp-20], eax
+        mov     eax, DWORD PTR [rbp-4]
+        cdqe
+        mov     edx, DWORD PTR [rbp-20]
+        mov     DWORD PTR [rbp-96+rax*4], edx
+        sar     WORD PTR [rbp-100]
+        sub     DWORD PTR [rbp-4], 1
+        add     DWORD PTR [rbp-8], 1
+.L2:
+        cmp     DWORD PTR [rbp-8], 15
+        jle     .L3
+        mov     DWORD PTR [rbp-12], 0
+        jmp     .L4
+.L5:
+        mov     eax, DWORD PTR [rbp-12]
+        cdqe
+        mov     eax, DWORD PTR [rbp-96+rax*4]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC0
+        mov     eax, 0
+        call    printf
+        add     DWORD PTR [rbp-12], 1
+.L4:
+        cmp     DWORD PTR [rbp-12], 15
+        jle     .L5
+        mov     eax, 0
+        leave
+        ret
+.LC1:
+        .string "%d \t"
+printStep:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     DWORD PTR [rbp-4], edi
+        mov     DWORD PTR [rbp-8], esi
+        mov     DWORD PTR [rbp-12], edx
+        mov     eax, DWORD PTR [rbp-4]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC1
+        mov     eax, 0
+        call    printf
+        mov     eax, DWORD PTR [rbp-8]
+        cwde
+        mov     edi, eax
+        call    printBin
+        mov     edi, 9
+        call    putchar
+        mov     eax, DWORD PTR [rbp-12]
+        cwde
+        mov     edi, eax
+        call    printBin
+        mov     edi, 9
+        call    putchar
+        nop
+        leave
+        ret
+.LC2:
+        .string "n \t A \t\t\t q \t\t\t q-1 \t operacion"
+.LC3:
+        .string "%d \t A-M\n"
+.LC4:
+        .string "%d \t A+M\n"
+.LC5:
+        .string "%d \t SHIFT\n"
+.LC6:
+        .string "END \t"
+.LC7:
+        .string "%d \n"
+.LC8:
+        .string "\nEl resultado en binario complemeto a dos es: "
+.LC9:
+        .string "El resultado en decimal es: "
+booth:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 48
+        mov     DWORD PTR [rbp-36], edi
+        mov     DWORD PTR [rbp-40], esi
+        mov     WORD PTR [rbp-2], 0
+        mov     eax, DWORD PTR [rbp-36]
+        mov     WORD PTR [rbp-12], ax
+        mov     eax, DWORD PTR [rbp-40]
+        mov     WORD PTR [rbp-4], ax
+        mov     eax, DWORD PTR [rbp-40]
+        and     eax, 1
+        mov     WORD PTR [rbp-6], ax
+        mov     WORD PTR [rbp-8], 0
+        mov     WORD PTR [rbp-10], 16
+        mov     edi, OFFSET FLAT:.LC2
+        call    puts
+        jmp     .L9
+.L17:
+        cmp     WORD PTR [rbp-6], 1
+        jne     .L10
+        cmp     WORD PTR [rbp-8], 0
+        je      .L11
+.L10:
+        cmp     WORD PTR [rbp-6], 0
+        jne     .L12
+        cmp     WORD PTR [rbp-8], 1
+        jne     .L12
+.L11:
+        movsx   edx, WORD PTR [rbp-4]
+        movsx   ecx, WORD PTR [rbp-2]
+        movsx   eax, WORD PTR [rbp-10]
+        mov     esi, ecx
+        mov     edi, eax
+        call    printStep
+.L12:
+        cmp     WORD PTR [rbp-6], 1
+        jne     .L13
+        cmp     WORD PTR [rbp-8], 0
+        jne     .L13
+        movsx   eax, WORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC3
+        mov     eax, 0
+        call    printf
+        movzx   eax, WORD PTR [rbp-2]
+        movzx   edx, WORD PTR [rbp-12]
+        sub     eax, edx
+        mov     WORD PTR [rbp-2], ax
+        jmp     .L14
+.L13:
+        cmp     WORD PTR [rbp-6], 0
+        jne     .L14
+        cmp     WORD PTR [rbp-8], 1
+        jne     .L14
+        movsx   eax, WORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC4
+        mov     eax, 0
+        call    printf
+        movzx   edx, WORD PTR [rbp-2]
+        movzx   eax, WORD PTR [rbp-12]
+        add     eax, edx
+        mov     WORD PTR [rbp-2], ax
+.L14:
+        movsx   edx, WORD PTR [rbp-4]
+        movsx   ecx, WORD PTR [rbp-2]
+        movsx   eax, WORD PTR [rbp-10]
+        mov     esi, ecx
+        mov     edi, eax
+        call    printStep
+        movsx   eax, WORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC5
+        mov     eax, 0
+        call    printf
+        movzx   eax, WORD PTR [rbp-2]
+        and     eax, 1
+        mov     WORD PTR [rbp-18], ax
+        cmp     WORD PTR [rbp-18], 1
+        jne     .L15
+        mov     WORD PTR [rbp-18], -32768
+        sar     WORD PTR [rbp-2]
+        movzx   eax, WORD PTR [rbp-4]
+        and     eax, 1
+        mov     WORD PTR [rbp-8], ax
+        sar     WORD PTR [rbp-4]
+        movzx   eax, WORD PTR [rbp-18]
+        or      WORD PTR [rbp-4], ax
+        movzx   eax, WORD PTR [rbp-4]
+        and     eax, 1
+        mov     WORD PTR [rbp-6], ax
+        jmp     .L16
+.L15:
+        mov     WORD PTR [rbp-18], 32767
+        sar     WORD PTR [rbp-2]
+        movzx   eax, WORD PTR [rbp-4]
+        and     eax, 1
+        mov     WORD PTR [rbp-8], ax
+        sar     WORD PTR [rbp-4]
+        movzx   eax, WORD PTR [rbp-18]
+        and     WORD PTR [rbp-4], ax
+        movzx   eax, WORD PTR [rbp-4]
+        and     eax, 1
+        mov     WORD PTR [rbp-6], ax
+.L16:
+        movzx   eax, WORD PTR [rbp-10]
+        sub     eax, 1
+        mov     WORD PTR [rbp-10], ax
+.L9:
+        cmp     WORD PTR [rbp-10], 0
+        jg      .L17
+        mov     edi, OFFSET FLAT:.LC6
+        mov     eax, 0
+        call    printf
+        movsx   eax, WORD PTR [rbp-2]
+        mov     edi, eax
+        call    printBin
+        mov     edi, 9
+        call    putchar
+        movsx   eax, WORD PTR [rbp-4]
+        mov     edi, eax
+        call    printBin
+        mov     edi, 9
+        call    putchar
+        movsx   eax, WORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC7
+        mov     eax, 0
+        call    printf
+        mov     edi, OFFSET FLAT:.LC8
+        mov     eax, 0
+        call    printf
+        movsx   eax, WORD PTR [rbp-2]
+        mov     edi, eax
+        call    printBin
+        movsx   eax, WORD PTR [rbp-4]
+        mov     edi, eax
+        call    printBin
+        mov     edi, 10
+        call    putchar
+        mov     edi, OFFSET FLAT:.LC9
+        mov     eax, 0
+        call    printf
+        movsx   eax, WORD PTR [rbp-2]
+        mov     DWORD PTR [rbp-16], eax
+        sal     DWORD PTR [rbp-16], 16
+        movsx   eax, WORD PTR [rbp-4]
+        or      DWORD PTR [rbp-16], eax
+        movsx   eax, WORD PTR [rbp-4]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC0
+        mov     eax, 0
+        call    printf
+        mov     eax, 0
+        leave
+        ret
+.LC10:
+        .string "La representacion binaria complemento a dos de %d es: "
+.LC11:
+        .string "ALGORITMO DE BOOTH:"
+main:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 32
+        mov     DWORD PTR [rbp-20], edi
+        mov     QWORD PTR [rbp-32], rsi
+        mov     rax, QWORD PTR [rbp-32]
+        add     rax, 8
+        mov     rax, QWORD PTR [rax]
+        mov     edx, 10
+        mov     esi, 0
+        mov     rdi, rax
+        call    strtol
+        mov     DWORD PTR [rbp-4], eax
+        mov     rax, QWORD PTR [rbp-32]
+        add     rax, 16
+        mov     rax, QWORD PTR [rax]
+        mov     edx, 10
+        mov     esi, 0
+        mov     rdi, rax
+        call    strtol
+        mov     DWORD PTR [rbp-8], eax
+        mov     eax, DWORD PTR [rbp-4]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC10
+        mov     eax, 0
+        call    printf
+        mov     eax, DWORD PTR [rbp-4]
+        cwde
+        mov     edi, eax
+        call    printBin
+        mov     edi, 10
+        call    putchar
+        mov     eax, DWORD PTR [rbp-8]
+        mov     esi, eax
+        mov     edi, OFFSET FLAT:.LC10
+        mov     eax, 0
+        call    printf
+        mov     eax, DWORD PTR [rbp-8]
+        cwde
+        mov     edi, eax
+        call    printBin
+        mov     edi, 10
+        call    putchar
+        mov     edi, 10
+        call    putchar
+        mov     edi, OFFSET FLAT:.LC11
+        call    puts
+        mov     edx, DWORD PTR [rbp-8]
+        mov     eax, DWORD PTR [rbp-4]
+        mov     esi, edx
+        mov     edi, eax
+        call    booth
+        mov     eax, 0
+        leave
+        ret

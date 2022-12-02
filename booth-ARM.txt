@@ -1,0 +1,402 @@
+printBin:                               // @printBin
+        sub     sp, sp, #112
+        stp     x29, x30, [sp, #96]             // 16-byte Folded Spill
+        add     x29, sp, #96
+        sturh   w0, [x29, #-2]
+        mov     w8, #1
+        sturh   w8, [x29, #-4]
+        mov     w8, #15
+        str     w8, [sp, #20]
+        str     wzr, [sp, #16]
+        b       .LBB0_1
+.LBB0_1:                                // =>This Inner Loop Header: Depth=1
+        ldr     w8, [sp, #16]
+        subs    w8, w8, #16
+        cset    w8, ge
+        tbnz    w8, #0, .LBB0_4
+        b       .LBB0_2
+.LBB0_2:                                //   in Loop: Header=BB0_1 Depth=1
+        ldursh  w8, [x29, #-2]
+        ldursh  w9, [x29, #-4]
+        and     w8, w8, w9
+        stur    w8, [x29, #-8]
+        ldur    w8, [x29, #-8]
+        ldrsw   x10, [sp, #20]
+        add     x9, sp, #24
+        str     w8, [x9, x10, lsl #2]
+        ldursh  w8, [x29, #-2]
+        asr     w8, w8, #1
+        sturh   w8, [x29, #-2]
+        ldr     w8, [sp, #20]
+        subs    w8, w8, #1
+        str     w8, [sp, #20]
+        b       .LBB0_3
+.LBB0_3:                                //   in Loop: Header=BB0_1 Depth=1
+        ldr     w8, [sp, #16]
+        add     w8, w8, #1
+        str     w8, [sp, #16]
+        b       .LBB0_1
+.LBB0_4:
+        str     wzr, [sp, #12]
+        b       .LBB0_5
+.LBB0_5:                                // =>This Inner Loop Header: Depth=1
+        ldr     w8, [sp, #12]
+        subs    w8, w8, #16
+        cset    w8, ge
+        tbnz    w8, #0, .LBB0_8
+        b       .LBB0_6
+.LBB0_6:                                //   in Loop: Header=BB0_5 Depth=1
+        ldrsw   x9, [sp, #12]
+        add     x8, sp, #24
+        ldr     w1, [x8, x9, lsl #2]
+        adrp    x0, .L.str
+        add     x0, x0, :lo12:.L.str
+        bl      printf
+        b       .LBB0_7
+.LBB0_7:                                //   in Loop: Header=BB0_5 Depth=1
+        ldr     w8, [sp, #12]
+        add     w8, w8, #1
+        str     w8, [sp, #12]
+        b       .LBB0_5
+.LBB0_8:
+        mov     w0, wzr
+        ldp     x29, x30, [sp, #96]             // 16-byte Folded Reload
+        add     sp, sp, #112
+        ret
+printStep:                              // @printStep
+        sub     sp, sp, #48
+        stp     x29, x30, [sp, #32]             // 16-byte Folded Spill
+        add     x29, sp, #32
+        stur    w0, [x29, #-8]
+        stur    w1, [x29, #-12]
+        str     w2, [sp, #16]
+        ldur    w1, [x29, #-8]
+        adrp    x0, .L.str.1
+        add     x0, x0, :lo12:.L.str.1
+        bl      printf
+        ldur    w0, [x29, #-12]
+        bl      printBin
+        adrp    x0, .L.str.2
+        add     x0, x0, :lo12:.L.str.2
+        str     x0, [sp, #8]                    // 8-byte Folded Spill
+        bl      printf
+        ldr     w0, [sp, #16]
+        bl      printBin
+        ldr     x0, [sp, #8]                    // 8-byte Folded Reload
+        bl      printf
+        ldur    w0, [x29, #-4]
+        ldp     x29, x30, [sp, #32]             // 16-byte Folded Reload
+        add     sp, sp, #48
+        ret
+booth:                                  // @booth
+        sub     sp, sp, #64
+        stp     x29, x30, [sp, #48]             // 16-byte Folded Spill
+        add     x29, sp, #48
+        stur    w0, [x29, #-4]
+        stur    w1, [x29, #-8]
+        sturh   wzr, [x29, #-10]
+        ldur    w8, [x29, #-4]
+        sturh   w8, [x29, #-12]
+        ldur    w8, [x29, #-8]
+        sturh   w8, [x29, #-14]
+        ldur    w8, [x29, #-8]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-16]
+        sturh   wzr, [x29, #-18]
+        mov     w8, #16
+        sturh   w8, [x29, #-20]
+        adrp    x0, .L.str.3
+        add     x0, x0, :lo12:.L.str.3
+        bl      printf
+        b       .LBB2_1
+.LBB2_1:                                // =>This Inner Loop Header: Depth=1
+        ldursh  w8, [x29, #-20]
+        subs    w8, w8, #0
+        cset    w8, le
+        tbnz    w8, #0, .LBB2_19
+        b       .LBB2_2
+.LBB2_2:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-16]
+        subs    w8, w8, #1
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_4
+        b       .LBB2_3
+.LBB2_3:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-18]
+        subs    w8, w8, #0
+        cset    w8, eq
+        tbnz    w8, #0, .LBB2_6
+        b       .LBB2_4
+.LBB2_4:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-16]
+        subs    w8, w8, #0
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_7
+        b       .LBB2_5
+.LBB2_5:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-18]
+        subs    w8, w8, #1
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_7
+        b       .LBB2_6
+.LBB2_6:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w0, [x29, #-20]
+        ldursh  w1, [x29, #-10]
+        ldursh  w2, [x29, #-14]
+        bl      printStep
+        b       .LBB2_7
+.LBB2_7:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-16]
+        subs    w8, w8, #1
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_10
+        b       .LBB2_8
+.LBB2_8:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-18]
+        subs    w8, w8, #0
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_10
+        b       .LBB2_9
+.LBB2_9:                                //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w1, [x29, #-18]
+        adrp    x0, .L.str.4
+        add     x0, x0, :lo12:.L.str.4
+        bl      printf
+        ldursh  w8, [x29, #-10]
+        ldursh  w9, [x29, #-12]
+        subs    w8, w8, w9
+        sturh   w8, [x29, #-10]
+        b       .LBB2_14
+.LBB2_10:                               //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-16]
+        subs    w8, w8, #0
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_13
+        b       .LBB2_11
+.LBB2_11:                               //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w8, [x29, #-18]
+        subs    w8, w8, #1
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_13
+        b       .LBB2_12
+.LBB2_12:                               //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w1, [x29, #-18]
+        adrp    x0, .L.str.5
+        add     x0, x0, :lo12:.L.str.5
+        bl      printf
+        ldursh  w8, [x29, #-10]
+        ldursh  w9, [x29, #-12]
+        add     w8, w8, w9
+        sturh   w8, [x29, #-10]
+        b       .LBB2_13
+.LBB2_13:                               //   in Loop: Header=BB2_1 Depth=1
+        b       .LBB2_14
+.LBB2_14:                               //   in Loop: Header=BB2_1 Depth=1
+        ldursh  w0, [x29, #-20]
+        ldursh  w1, [x29, #-10]
+        ldursh  w2, [x29, #-14]
+        bl      printStep
+        ldursh  w1, [x29, #-18]
+        adrp    x0, .L.str.6
+        add     x0, x0, :lo12:.L.str.6
+        bl      printf
+        ldursh  w8, [x29, #-10]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-22]
+        ldursh  w8, [x29, #-22]
+        subs    w8, w8, #1
+        cset    w8, ne
+        tbnz    w8, #0, .LBB2_16
+        b       .LBB2_15
+.LBB2_15:                               //   in Loop: Header=BB2_1 Depth=1
+        mov     w8, #32768
+        sturh   w8, [x29, #-22]
+        ldursh  w8, [x29, #-10]
+        asr     w8, w8, #1
+        sturh   w8, [x29, #-10]
+        ldursh  w8, [x29, #-14]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-18]
+        ldursh  w8, [x29, #-14]
+        asr     w8, w8, #1
+        sturh   w8, [x29, #-14]
+        ldursh  w8, [x29, #-14]
+        ldursh  w9, [x29, #-22]
+        orr     w8, w8, w9
+        sturh   w8, [x29, #-14]
+        ldursh  w8, [x29, #-14]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-16]
+        b       .LBB2_17
+.LBB2_16:                               //   in Loop: Header=BB2_1 Depth=1
+        mov     w8, #32767
+        sturh   w8, [x29, #-22]
+        ldursh  w8, [x29, #-10]
+        asr     w8, w8, #1
+        sturh   w8, [x29, #-10]
+        ldursh  w8, [x29, #-14]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-18]
+        ldursh  w8, [x29, #-14]
+        asr     w8, w8, #1
+        sturh   w8, [x29, #-14]
+        ldursh  w8, [x29, #-14]
+        ldursh  w9, [x29, #-22]
+        and     w8, w8, w9
+        sturh   w8, [x29, #-14]
+        ldursh  w8, [x29, #-14]
+        and     w8, w8, #0x1
+        sturh   w8, [x29, #-16]
+        b       .LBB2_17
+.LBB2_17:                               //   in Loop: Header=BB2_1 Depth=1
+        b       .LBB2_18
+.LBB2_18:                               //   in Loop: Header=BB2_1 Depth=1
+        ldurh   w9, [x29, #-20]
+        mov     w8, #-1
+        add     w8, w8, w9, uxth
+        sturh   w8, [x29, #-20]
+        b       .LBB2_1
+.LBB2_19:
+        adrp    x0, .L.str.7
+        add     x0, x0, :lo12:.L.str.7
+        bl      printf
+        ldurh   w0, [x29, #-10]
+        bl      printBin
+        adrp    x0, .L.str.2
+        add     x0, x0, :lo12:.L.str.2
+        str     x0, [sp, #8]                    // 8-byte Folded Spill
+        bl      printf
+        ldurh   w0, [x29, #-14]
+        bl      printBin
+        ldr     x0, [sp, #8]                    // 8-byte Folded Reload
+        bl      printf
+        ldursh  w1, [x29, #-18]
+        adrp    x0, .L.str.8
+        add     x0, x0, :lo12:.L.str.8
+        bl      printf
+        adrp    x0, .L.str.9
+        add     x0, x0, :lo12:.L.str.9
+        bl      printf
+        ldurh   w0, [x29, #-10]
+        bl      printBin
+        ldurh   w0, [x29, #-14]
+        bl      printBin
+        adrp    x0, .L.str.10
+        add     x0, x0, :lo12:.L.str.10
+        bl      printf
+        adrp    x0, .L.str.11
+        add     x0, x0, :lo12:.L.str.11
+        bl      printf
+        ldursh  w8, [x29, #-10]
+        str     w8, [sp, #20]
+        ldr     w8, [sp, #20]
+        lsl     w8, w8, #16
+        str     w8, [sp, #20]
+        ldr     w8, [sp, #20]
+        ldursh  w9, [x29, #-14]
+        orr     w8, w8, w9
+        str     w8, [sp, #20]
+        ldursh  w1, [x29, #-14]
+        adrp    x0, .L.str
+        add     x0, x0, :lo12:.L.str
+        bl      printf
+        mov     w0, wzr
+        ldp     x29, x30, [sp, #48]             // 16-byte Folded Reload
+        add     sp, sp, #64
+        ret
+main:                                   // @main
+        sub     sp, sp, #80
+        stp     x29, x30, [sp, #64]             // 16-byte Folded Spill
+        add     x29, sp, #64
+        mov     w8, wzr
+        stur    w8, [x29, #-28]                 // 4-byte Folded Spill
+        stur    wzr, [x29, #-4]
+        stur    w0, [x29, #-8]
+        stur    x1, [x29, #-16]
+        ldur    x8, [x29, #-16]
+        ldr     x0, [x8, #8]
+        mov     x1, xzr
+        str     x1, [sp]                        // 8-byte Folded Spill
+        mov     w2, #10
+        str     w2, [sp, #12]                   // 4-byte Folded Spill
+        bl      strtol
+        ldr     x1, [sp]                        // 8-byte Folded Reload
+        ldr     w2, [sp, #12]                   // 4-byte Folded Reload
+        mov     w8, w0
+        stur    w8, [x29, #-20]
+        ldur    x8, [x29, #-16]
+        ldr     x0, [x8, #16]
+        bl      strtol
+        mov     w8, w0
+        stur    w8, [x29, #-24]
+        ldur    w1, [x29, #-20]
+        adrp    x0, .L.str.12
+        add     x0, x0, :lo12:.L.str.12
+        str     x0, [sp, #16]                   // 8-byte Folded Spill
+        bl      printf
+        ldur    w0, [x29, #-20]
+        bl      printBin
+        adrp    x0, .L.str.10
+        add     x0, x0, :lo12:.L.str.10
+        str     x0, [sp, #24]                   // 8-byte Folded Spill
+        bl      printf
+        ldr     x0, [sp, #16]                   // 8-byte Folded Reload
+        ldur    w1, [x29, #-24]
+        bl      printf
+        ldur    w0, [x29, #-24]
+        bl      printBin
+        ldr     x0, [sp, #24]                   // 8-byte Folded Reload
+        bl      printf
+        ldr     x0, [sp, #24]                   // 8-byte Folded Reload
+        bl      printf
+        adrp    x0, .L.str.13
+        add     x0, x0, :lo12:.L.str.13
+        bl      printf
+        ldur    w0, [x29, #-20]
+        ldur    w1, [x29, #-24]
+        bl      booth
+        ldur    w0, [x29, #-28]                 // 4-byte Folded Reload
+        ldp     x29, x30, [sp, #64]             // 16-byte Folded Reload
+        add     sp, sp, #80
+        ret
+.L.str:
+        .asciz  "%d"
+
+.L.str.1:
+        .asciz  "%d \t"
+
+.L.str.2:
+        .asciz  "\t"
+
+.L.str.3:
+        .asciz  "n \t A \t\t\t q \t\t\t q-1 \t operacion\n"
+
+.L.str.4:
+        .asciz  "%d \t A-M\n"
+
+.L.str.5:
+        .asciz  "%d \t A+M\n"
+
+.L.str.6:
+        .asciz  "%d \t SHIFT\n"
+
+.L.str.7:
+        .asciz  "END \t"
+
+.L.str.8:
+        .asciz  "%d \n"
+
+.L.str.9:
+        .asciz  "\nEl resultado en binario complemeto a dos es: "
+
+.L.str.10:
+        .asciz  "\n"
+
+.L.str.11:
+        .asciz  "El resultado en decimal es: "
+
+.L.str.12:
+        .asciz  "La representacion binaria complemento a dos de %d es: "
+
+.L.str.13:
+        .asciz  "ALGORITMO DE BOOTH:\n"
